@@ -5,12 +5,12 @@ title: Online Cloths Shop
 ---
 classDiagram
     class User
-    User : string Id
+    User : int Id
     User : string name
     User : string surname
     User : string adress
     User : register_or_login()
-
+    
     class Product
     Product : int product_id
     Product : string product_name
@@ -28,7 +28,7 @@ classDiagram
     Cart : check_status()
 
     class UserCard
-    UserCard : string card_number
+    UserCard : int card_number
     UserCard : double bank-account
     UserCard : buying()
 
@@ -37,16 +37,16 @@ classDiagram
     Warehouse : update_Warehouse()
     
     class Review
-    Review : string review_id
-    Review : string user_id
-    Review : string product_id
+    Review : int review_id
+    Review : int user_id
+    Review : int product_id
     Review : int rating
     Review : string comment
-    Review : addReview(string)
+    Review : addReview()
     Review : displayReviews()
 
     class Order
-    Order : string order_id
+    Order : int order_id
     Order : vector <Product> products
     Order : double total_price
     Order : string order_status
@@ -65,7 +65,6 @@ classDiagram
     Admin : manage_users()
     Admin : view_orders()
     Admin : update_Warehouse()
-
 
     Cart <|-- Warehouse
     Cart <|-- Product
