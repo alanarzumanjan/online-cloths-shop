@@ -3,8 +3,34 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 using namespace std;
+
+enum{
+    Jeans,
+    T_shirts,
+    Shirts,
+    Sweaters,
+    Hoodies, 
+    Jumpers, 
+    Pants, 
+    Sweatpants, 
+    Coats, 
+    Jackets, 
+    Fur_coats,
+    Shorts,
+    Windbreakers,
+    Socks,
+    Briefs,
+    Bras
+};
+
+enum{
+    Male, // Мужской
+    Female, // Женский
+    Unisex // Унисекс
+};
 
 class User {
 private:
@@ -144,7 +170,7 @@ public:
         review_id(review_id), user_id(user_id), product_id(product_id), comment(comment),
         rating(rating) {}
 
-    void addReview(int product_id){
+    void addReview(){
 
     }
 
@@ -153,12 +179,133 @@ public:
     }
 };
 
+class Product {
+private: 
+    
+public:
+    int product_id;
+    string product_name;
+    string product_description;
+    string product_category;
+    string product_gender;
+    float product_price;
+    int product_quantity;
+
+    Product(int product_id,string product_name,string product_description,string product_category,
+        string product_gender, float product_price, int product_quantity): 
+        product_id(product_id), product_name(product_name), product_description(product_description), 
+        product_gender(product_gender), product_category(product_category), product_price(product_price),
+        product_quantity(product_quantity){}
+
+
+    void show_products(){
+        int choice;
+
+        do{
+            
+
+        }while(choice);
+
+    }
+};
+
+class ShoppingCart: public Product 
+{
+private:
+    vector<Product> Products;
+
+public:
+    void addProduct(const Product& new_product) {
+        Products.push_back(new_product);
+        cout << new_product.product_name << " added to the cart." << endl;
+    }
+
+    void removeProduct(const string& product_name) {
+        auto it = remove_if(Products.begin(), Products.end(),
+            [&](const Product& Product) { return Product.product_name == product_name; });
+
+        if (it != Products.end()) {
+            Products.erase(it, Products.end());
+            cout << product_name << " removed from the cart." << endl;
+        } 
+        else {
+            cout << product_name << " not found in the cart." << endl;
+        }
+    }
+
+    void displayCart() {
+        if (Products.empty()) {
+            cout << "The shopping cart is empty." << endl;
+        } 
+        else {
+            cout << "Products in the shopping cart:" << endl;
+            for (const auto& Product : Products) {
+                cout << Product.product_name << " - $" << Product.product_price << " - Quantity: " << Product.product_quantity << endl;
+            }
+        }
+    }
+    
+};
+
+class Admin: public Product
+{
+public:
+
+    void product_add_to_shop(){
+        
+    }
+
+    void product_delete_to_shop(){
+
+    }
+
+    void manage_products(){}
+    void manage_users(){}
+    void view_orders(){}
+    void warehouse_update(){}
+
+    void Admin_Functions(){
+        int choice;
+        do{
+            cout << "--> Admin functions <--" << endl;
+            cout << "1. Manage Products" << endl;
+            cout << "2. Manage Users" << endl;
+            cout << "3. View Orders" << endl;
+            cout << "4. Warhouse Update" << endl;
+            cout << "Enter your choice: ";
+            cin >> choice;
+
+            switch (choice)
+            {
+            case 1:
+                manage_products();
+                break;
+            case 2:
+                manage_users();
+                break;
+            case 3:
+                view_orders();
+                break;
+            case 4:
+                warehouse_update();
+                break;
+            case 5:
+                break;
+            default:
+                cout << "Incorrect choice, please try again." << endl;
+            }
+        }while(choice != 5);
+    }
+    
+
+};
+
 void Menu(){
     cout << endl;
     cout << "====> Menu <====" << endl;
     cout << "1. Register / Login" << endl;
     cout << "2. Show and add/remove products to card" << endl;
-    cout << "3. Show Card status" << endl;
+    cout << "3. Show Card status and add/remove products to card" << endl;
     cout << "4. Payment" << endl;
     cout << "5. Admin" << endl;
     cout << "6. Exit" << endl;
@@ -176,10 +323,10 @@ int main() {
             case 1: // Register or Login
                 user.register_or_login();
                 break;
-            case 2: // Show and add products to card
+            case 2: // Show products
                 
                 break;
-            case 3: // Show Card status
+            case 3: // Show Card status and add products to card
                 
                 break;
             case 4: // Payment

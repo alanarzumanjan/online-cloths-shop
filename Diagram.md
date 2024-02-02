@@ -10,14 +10,17 @@ classDiagram
     User : string surname
     User : string adress
     User : register_or_login()
+    User : user_database.txt
     
     class Product
     Product : int product_id
     Product : string product_name
     Product : string product_description
-    Product : string category
+    Product : string product_category
+    Product : string product_gender
     Product : float product_prise
     Product : display_info()
+    Product : product_database.txt
     
     class Cart
     Cart : vector <product> products
