@@ -190,44 +190,72 @@ public:
     int product_id;
     string product_name;
     string product_brand;
+    string product_size;
     string product_description;
     string product_category;
     string product_gender;
     float product_price;
     int product_quantity;
 
-    Product(int product_id, string product_name, string product_brand, string product_description, string product_category,
+    Product(int product_id, string product_name, string product_brand, string product_size, string product_description, string product_category,
         string product_gender, float product_price, int product_quantity): 
         product_id(product_id), product_name(product_name), product_brand(product_brand),
-        product_description(product_description), product_category(product_category),
-        product_gender(product_gender), product_price(product_price),
-        product_quantity(product_quantity) {}
+        product_size(product_size), product_description(product_description), product_category(product_category),
+        product_gender(product_gender), product_price(product_price), product_quantity(product_quantity) {} 
+     
+    void show_products_and_add_to_cart() {
+        cout << "List of Products:" << endl;
+        cout << "================" << endl;
 
+        ifstream file("Products_database.txt");
 
+        if (!file.is_open()) {
+            cerr << "Error opening the products database file." << endl;
+            return;
+        }
 
-    void show_products(){
-        int choice;
+        int product_id;
+        string product_name, product_brand, product_size, product_description;
+        int product_category, product_gender;
+        float product_price;
+        int product_quantity;
 
-        do{
-            
+        while (file >> product_id >> product_name >> product_brand >> product_size >> product_description >>
+            product_category >> product_gender >> product_price >> product_quantity) {
 
-        }while(choice);
+            cout << "Product ID: " << product_id << endl;
+            cout << "Name: " << product_name << endl;
+            cout << "Brand: " << product_brand << endl;
+            cout << "Size: " << product_size << endl;
+            cout << "Description: " << product_description << endl;
+            cout << "Category: " << product_category << endl;
+            cout << "Gender: " << product_gender << endl;
+            cout << "Price: $" << product_price << endl;
+            cout << "Quantity: " << product_quantity << endl;
+            cout << "================" << endl;
+        }
+
+        file.close();
+        int entered_product_id;
+        cout << "Enter ID product to add it to cart: ";
+        cin >> entered_product_id;
+        add_product_to_cart(entered_product_id);
 
     }
 };
 
-class ShoppingCart: public Product 
+class Cart: public Product 
 {
 private:
     vector<Product> Products;
 
 public:
-    void addProduct(const Product& new_product) {
+    void add_product_to_cart(const Product& new_product) {
         Products.push_back(new_product);
         cout << new_product.product_name << " added to the cart." << endl;
     }
 
-    void removeProduct(const string& product_name) {
+    void remove_product_to_cart(const string& product_name) {
         auto it = remove_if(Products.begin(), Products.end(),
             [&](const Product& Product) { return Product.product_name == product_name; });
 
@@ -253,6 +281,7 @@ public:
     }
     
 };
+
 
 class Warehouse{
 
@@ -345,6 +374,7 @@ public:
             cout << "2. Manage Users" << endl;
             cout << "3. View Orders" << endl;
             cout << "4. Warhouse Update" << endl;
+            cout << "5. Exit" << endl;
             cout << "Enter your choice: ";
             cin >> choice;
 
@@ -370,7 +400,6 @@ public:
         }while(choice != 5);
     }
     
-
 };
 
 void Menu(){
@@ -396,10 +425,10 @@ int main() {
             case 1: // Register or Login
                 user.register_or_login();
                 break;
-            case 2: // Show products
-                
+            case 2: // Show products and add products to card
+                show_products_and_add_to_cart();
                 break;
-            case 3: // Show Card status and add products to card
+            case 3: // Show Card status 
                 
                 break;
             case 4: // Payment

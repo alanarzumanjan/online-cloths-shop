@@ -16,6 +16,7 @@ classDiagram
     Product : int product_id
     Product : string product_name
     Product : string product_brand
+    Product : string product_size
     Product : string product_description
     Product : string product_category
     Product : string product_gender
