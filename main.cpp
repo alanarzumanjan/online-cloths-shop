@@ -5,6 +5,8 @@
 #include <sstream>
 #include <algorithm>
 
+// Main file. Don't change please
+
 using namespace std;
 
 enum{
@@ -43,8 +45,10 @@ private:
 public:
     User() : user_id(0), user_name(""), user_surname(""), user_address(""), password("") {}
 
-    User(int user_id, const string& user_name, const string& user_surname, const string& user_address, const string& password)
-        : user_id(user_id), user_name(user_name), user_surname(user_surname), user_address(user_address), password(password) {}
+    User(int user_id, const string& user_name, const string& user_surname, const string& user_address,
+        const string& password):
+            user_id(user_id), user_name(user_name),
+            user_surname(user_surname), user_address(user_address), password(password) {}
 
     int getUserId() const {
         return user_id;
@@ -106,17 +110,17 @@ public:
                 cout << "Enter your password: ";
                 string entered_password;
                 cin >> entered_password;
-
+                
                 if (entered_password == stored_password) {
                     cout << "Login successful!" << endl;
                     userFound = true;
                     break; 
-                } 
+                    } 
                 else {
                     cout << "Incorrect password." << endl;
                     userFound = true;
                     break;
-                }
+                    }
             }
         }
         if (!userFound) {
@@ -185,17 +189,20 @@ private:
 public:
     int product_id;
     string product_name;
+    string product_brand;
     string product_description;
     string product_category;
     string product_gender;
     float product_price;
     int product_quantity;
 
-    Product(int product_id,string product_name,string product_description,string product_category,
+    Product(int product_id, string product_name, string product_brand, string product_description, string product_category,
         string product_gender, float product_price, int product_quantity): 
-        product_id(product_id), product_name(product_name), product_description(product_description), 
-        product_gender(product_gender), product_category(product_category), product_price(product_price),
-        product_quantity(product_quantity){}
+        product_id(product_id), product_name(product_name), product_brand(product_brand),
+        product_description(product_description), product_category(product_category),
+        product_gender(product_gender), product_price(product_price),
+        product_quantity(product_quantity) {}
+
 
 
     void show_products(){
@@ -247,20 +254,86 @@ public:
     
 };
 
+class Warehouse{
+
+};
+
 class Admin: public Product
 {
 public:
-
-    void product_add_to_shop(){
+    
+    void product_add_to_shop(){ // via warehouse
         
+        cout << "Enter product id: ";
+        cin >> product_id;
+
     }
 
-    void product_delete_to_shop(){
+    void product_delete_to_shop(){ // via warehouse
+        cout << "Enter product id: ";
+        cin >> product_id;
 
     }
 
-    void manage_products(){}
-    void manage_users(){}
+    void manage_products(){
+        int choice;
+        do{
+            cout << "--> Products manager <--" << endl;
+            cout << "1. Add product to shop" << endl;
+            cout << "2. Delete product from shop" << endl;
+            cout << "3. Exit" << endl;
+            cin >> choice;
+
+            switch (choice)
+            {
+            case 1:
+                product_add_to_shop();
+                break;
+            case 2:
+                product_delete_to_shop();
+                break;
+            case 3:
+                break;
+            default:
+                cout << "Incorrect choice, please try again." << endl << endl;
+            }
+
+        }while(choice != 3);
+    }
+    
+    void add_user(){}
+    void delete_user(){}
+    void modify_user(){}
+
+    void manage_users(){
+        int choice;
+        do{
+            cout << "--> Users manager <--" << endl;
+            cout << "1. Add User" << endl;
+            cout << "2. Delete User" << endl;
+            cout << "3. Modify User" << endl;
+            cout << "4. Exit" << endl;
+            cin >> choice;
+
+            switch(choice){
+                case 1:
+                    add_user();
+                    break;
+                case 2:
+                    delete_user();
+                    break;
+                case 3:
+                    modify_user();
+                    break;
+                case 4:
+                    break;
+                default:
+                    cout << "Incorrect choice, please try again." << endl << endl;  
+            }
+
+        }while(choice != 4);
+    }
+
     void view_orders(){}
     void warehouse_update(){}
 
@@ -292,7 +365,7 @@ public:
             case 5:
                 break;
             default:
-                cout << "Incorrect choice, please try again." << endl;
+                cout << "Incorrect choice, please try again." << endl << endl;
             }
         }while(choice != 5);
     }

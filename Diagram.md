@@ -10,17 +10,18 @@ classDiagram
     User : string surname
     User : string adress
     User : register_or_login()
-    User : user_database.txt
+    User : User_database.txt
     
     class Product
     Product : int product_id
     Product : string product_name
+    Product : string product_brand
     Product : string product_description
     Product : string product_category
     Product : string product_gender
     Product : float product_prise
     Product : display_info()
-    Product : product_database.txt
+    Product : Product_database.txt
     
     class Cart
     Cart : vector <product> products
@@ -36,7 +37,7 @@ classDiagram
     UserCard : buying()
 
     class Warehouse
-    Warehouse : vector <Product> products
+    Warehouse : Warehouse_database.txt
     Warehouse : update_Warehouse()
     
     class Review
