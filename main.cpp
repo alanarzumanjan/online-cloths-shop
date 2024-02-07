@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <iomanip>
 
 // Main file. Don't change please
 
@@ -133,6 +134,7 @@ public:
         int choice;
         cout << "1. Register\n2. Login\nEnter your choice: ";
         cin >> choice;
+
         if (choice == 1) {
             registerUser();
         } 
@@ -202,8 +204,88 @@ public:
         product_id(product_id), product_name(product_name), product_brand(product_brand),
         product_size(product_size), product_description(product_description), product_category(product_category),
         product_gender(product_gender), product_price(product_price), product_quantity(product_quantity) {} 
-     
-    void show_products_and_add_to_cart() {
+
+    string toString() const {
+        stringstream ss;
+        ss << product_id << " " << product_name << " " << product_price;
+        return ss.str();
+    }
+};
+
+class Inventory {
+private:
+    vector<Product> products;
+
+public:
+    Inventory() {
+        loadProducts();
+    }
+
+    void loadProducts() {
+        ifstream file("Products_database.txt");
+        if (!file.is_open()) {
+            cerr << "Error opening the products database file." << endl;
+            return;
+        }
+
+        // Переменные для чтения данных из файла
+        int id, quantity;
+        string name, brand, size, description, category, gender;
+        float price;
+
+        products.clear();
+
+        // Предположим, что данные продукта разделены пробелами и кавычками для строк с пробелами
+        string line;
+        while (getline(file, line)) {
+            istringstream iss(line);
+            // Чтение данных продукта. Может потребоваться настроить в зависимости от формата файла.
+            if (iss >> id >> name >> brand >> size >> quoted(description) >> category >> gender >> price >> quantity) {
+                products.emplace_back(id, name, brand, size, description, category, gender, price, quantity);
+            }
+        }
+
+        file.close();
+    }
+
+
+
+    bool addProductToCartById(int id, vector<Product>& cart) {
+        auto it = find_if(products.begin(), products.end(), [id](const Product& product) {
+            return product.product_id == id;
+        });
+
+        if (it != products.end()) {
+            cart.push_back(*it);
+            products.erase(it);
+            saveProducts();
+            return true;
+        }
+        return false;
+    }
+
+    void saveProducts() {
+        ofstream file("Products_database.txt");
+        for (const auto& product : products) {
+            file << product.toString() << endl;
+        }
+        file.close();
+    }
+};
+
+class Cart
+{
+private:
+
+public:
+    vector<Product> Products;
+
+    void add_product_to_cart(const Product& new_product) {
+        Products.push_back(new_product);
+        cout << new_product.product_name << " added to the cart." << endl;
+    }
+
+    void show_products() {
         cout << "List of Products:" << endl;
         cout << "================" << endl;
 
@@ -236,28 +318,15 @@ public:
         }
 
         file.close();
-        int entered_product_id;
-        cout << "Enter ID product to add it to cart: ";
-        cin >> entered_product_id;
-        add_product_to_cart(entered_product_id);
 
-    }
-};
-
-class Cart: public Product 
-{
-private:
-    vector<Product> Products;
-
-public:
-    void add_product_to_cart(const Product& new_product) {
-        Products.push_back(new_product);
-        cout << new_product.product_name << " added to the cart." << endl;
     }
 
     void remove_product_to_cart(const string& product_name) {
         auto it = remove_if(Products.begin(), Products.end(),
-            [&](const Product& Product) { return Product.product_name == product_name; });
+            [&](const Product& Product) {
+                return Product.product_name == product_name; 
+                }
+            );
 
         if (it != Products.end()) {
             Products.erase(it, Products.end());
@@ -268,7 +337,7 @@ public:
         }
     }
 
-    void displayCart() {
+    void display_cart() {
         if (Products.empty()) {
             cout << "The shopping cart is empty." << endl;
         } 
@@ -417,25 +486,39 @@ void Menu(){
 int main() {
     int choice;
     User user;
+    Cart cart;
+    Inventory inventory;
 
     do {
         Menu();
         cin >> choice;
+
         switch (choice) {
             case 1: // Register or Login
                 user.register_or_login();
                 break;
             case 2: // Show products and add products to card
-                show_products_and_add_to_cart();
+                cart.show_products();
+                cout << "Enter product ID to add to cart: ";
+                int product_id;
+                cin >> product_id;
+                if (inventory.addProductToCartById(product_id, cart.Products))
+                {
+                    cout << "Product added to cart." << endl;
+                } 
+                else {
+                    cout << "Product not found." << endl;
+                }
+                
                 break;
             case 3: // Show Card status 
-                
+                cart.display_cart();
                 break;
             case 4: // Payment
                 
                 break;
             case 5: // Admin
-                
+                // Admin_Functions();
                 break;
             case 6: // Exit
                 cout << "Exiting the program." << endl;
@@ -447,3 +530,4 @@ int main() {
 
     return 0;
 }
+ 
