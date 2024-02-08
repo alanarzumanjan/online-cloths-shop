@@ -1,0 +1,118 @@
+class Warehouse{
+
+};
+
+class Admin: public Product
+{
+public:
+    
+    void product_add_to_shop(){ // via warehouse
+        
+        cout << "Enter product id: ";
+        cin >> product_id;
+
+    }
+
+    void product_delete_to_shop(){ // via warehouse
+        cout << "Enter product id: ";
+        cin >> product_id;
+
+    }
+
+    void manage_products(){
+        int choice;
+        do{
+            cout << "--> Products manager <--" << endl;
+            cout << "1. Add product to shop" << endl;
+            cout << "2. Delete product from shop" << endl;
+            cout << "3. Exit" << endl;
+            cin >> choice;
+
+            switch (choice)
+            {
+            case 1:
+                product_add_to_shop();
+                break;
+            case 2:
+                product_delete_to_shop();
+                break;
+            case 3:
+                break;
+            default:
+                cout << "Incorrect choice, please try again." << endl << endl;
+            }
+
+        }while(choice != 3);
+    }
+    
+    void add_user(){}
+    void delete_user(){}
+    void modify_user(){}
+
+    void manage_users(){
+        int choice;
+        do{
+            cout << "--> Users manager <--" << endl;
+            cout << "1. Add User" << endl;
+            cout << "2. Delete User" << endl;
+            cout << "3. Modify User" << endl;
+            cout << "4. Exit" << endl;
+            cin >> choice;
+
+            switch(choice){
+                case 1:
+                    add_user();
+                    break;
+                case 2:
+                    delete_user();
+                    break;
+                case 3:
+                    modify_user();
+                    break;
+                case 4:
+                    break;
+                default:
+                    cout << "Incorrect choice, please try again." << endl << endl;  
+            }
+
+        }while(choice != 4);
+    }
+
+    void view_orders(){}
+    void warehouse_update(){}
+
+    void Admin_Functions(){
+        int choice;
+        do{
+            cout << "--> Admin functions <--" << endl;
+            cout << "1. Manage Products" << endl;
+            cout << "2. Manage Users" << endl;
+            cout << "3. View Orders" << endl;
+            cout << "4. Warhouse Update" << endl;
+            cout << "5. Exit" << endl;
+            cout << "Enter your choice: ";
+            cin >> choice;
+
+            switch (choice)
+            {
+            case 1:
+                manage_products();
+                break;
+            case 2:
+                manage_users();
+                break;
+            case 3:
+                view_orders();
+                break;
+            case 4:
+                warehouse_update();
+                break;
+            case 5:
+                break;
+            default:
+                cout << "Incorrect choice, please try again." << endl << endl;
+            }
+        }while(choice != 5);
+    }
+    
+};

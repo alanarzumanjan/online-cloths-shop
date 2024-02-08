@@ -5,10 +5,12 @@
 #include <sstream>
 #include <algorithm>
 #include <iomanip>
-
+#include <thread> // Для использования his_thread::sleep_for
+#include <chrono> // Для использования schrono::seconds
 // Main file. Don't change please
 
 using namespace std;
+using namespace this_thread;
 
 enum{
     Jeans,
@@ -228,18 +230,16 @@ public:
             return;
         }
 
-        // Переменные для чтения данных из файла
         int id, quantity;
         string name, brand, size, description, category, gender;
         float price;
 
         products.clear();
 
-        // Предположим, что данные продукта разделены пробелами и кавычками для строк с пробелами
         string line;
         while (getline(file, line)) {
             istringstream iss(line);
-            // Чтение данных продукта. Может потребоваться настроить в зависимости от формата файла.
+            
             if (iss >> id >> name >> brand >> size >> quoted(description) >> category >> gender >> price >> quantity) {
                 products.emplace_back(id, name, brand, size, description, category, gender, price, quantity);
             }
@@ -247,8 +247,6 @@ public:
 
         file.close();
     }
-
-
 
     bool addProductToCartById(int id, vector<Product>& cart) {
         auto it = find_if(products.begin(), products.end(), [id](const Product& product) {
@@ -270,6 +268,77 @@ public:
             file << product.toString() << endl;
         }
         file.close();
+    }
+    // To shop
+    void add_product() {
+        ifstream readFile("Products_database.txt");
+        string line;
+        int max_id = 0;
+        
+        while (getline(readFile, line)) {
+            istringstream iss(line);
+            int id;
+            if (iss >> id) {
+                max_id = max(max_id, id);
+            }
+        }
+        readFile.close();
+
+        int id = max_id + 1;
+        int quantity;
+        string name, brand, size, description, category, gender;
+        float price;
+        
+        cout << "Enter product name: ";
+        cin.ignore();
+        getline(cin, name);
+
+        cout << "Enter product brand: ";
+        getline(cin, brand);
+
+        cout << "Enter product size: ";
+        getline(cin, size);
+
+        cout << "Enter product description: ";
+        getline(cin, description);
+
+        cout << "Enter product category: ";
+        getline(cin, category);
+
+        cout << "Enter product gender (Male/Female/Unisex): ";
+        getline(cin, gender);
+
+        cout << "Enter product price: ";
+        cin >> price;
+
+        cout << "Enter product quantity: ";
+        cin >> quantity;
+
+        ofstream file("Products_database.txt", ios::app);
+        if (file.is_open()) {
+            file << id << " " 
+                << name << " "
+                << brand << " "
+                << size << " "
+                << description << " "
+                << category << " "
+                << gender << " "
+                << price << " " 
+                << quantity << endl;
+            cout << "Product added successfully." << endl;
+        } else {
+            cout << "Unable to open the database file." << endl;
+        }
+    }
+    Product parseProductLine(const string& line) {
+        
+        istringstream iss(line);
+        int id; string name; float price;
+        
+        if (iss >> id >> name >> price) {
+            return Product(id, name, );
+        }
+        return Product(); 
     }
 };
 
@@ -321,19 +390,19 @@ public:
 
     }
 
-    void remove_product_to_cart(const string& product_name) {
+    void remove_product_to_cart(const int& product_id) {
         auto it = remove_if(Products.begin(), Products.end(),
             [&](const Product& Product) {
-                return Product.product_name == product_name; 
+                return Product.product_id == product_id; 
                 }
             );
 
         if (it != Products.end()) {
             Products.erase(it, Products.end());
-            cout << product_name << " removed from the cart." << endl;
+            cout << product_id << " removed from the cart." << endl;
         } 
         else {
-            cout << product_name << " not found in the cart." << endl;
+            cout << product_id << " not found in the cart." << endl;
         }
     }
 
@@ -351,9 +420,60 @@ public:
     
 };
 
+class Warehouse {
+    public:
+        // all aboard the breakage-mobile
+         vector<Product> products;
 
-class Warehouse{
+         Warehouse();
 
+        void update_warehouse() {
+            int choice;
+            cout << "1. Add product\n2. Modify product\n3. Delete product\nPlease enter your choice: "; cin >> choice;
+            switch (choice) {
+                case 3:
+                    string product_name;
+                    cout << "Enter in the name of the product: "; cin >> product_name;
+                    auto it = remove_if(products.begin(), products.end(),
+                        [&](const Product& Product) { return Product.product_name == product_name; });
+
+                    if (it != products.end()) {
+                        products.erase(it, products.end());
+                        cout << product_name << " removed from the cart." << endl;
+                    } 
+                    else {
+                        cout << product_name << " not found in the cart." << endl;
+                    }
+            }
+        }
+};
+
+class Warehouse {
+    public:
+        // all aboard the breakage-mobile
+        vector<Product> products;
+
+        Warehouse();
+
+        void update_warehouse() {
+            int choice;
+            cout << "1. Add product\n2. Modify product\n3. Delete product\nPlease enter your choice: "; cin >> choice;
+            switch (choice) {
+                case 3:
+                    string product_name;
+                    cout << "Enter in the name of the product: "; cin >> product_name;
+                    auto it = remove_if(products.begin(), products.end(),
+                        [&](const Product& Product) { return Product.product_name == product_name; });
+
+                    if (it != products.end()) {
+                        products.erase(it, products.end());
+                        cout << product_name << " removed from the cart." << endl;
+                    } 
+                    else {
+                        cout << product_name << " not found in the cart." << endl;
+                    }
+            }
+        }
 };
 
 class Admin: public Product
@@ -400,40 +520,180 @@ public:
     }
     
     void add_user(){}
-    void delete_user(){}
-    void modify_user(){}
+    void delete_user(){
+        auto it = remove_if(User.begin(), User.end(),
+                [&](const User& User) { 
+                    return Product.product_name == product_name; });
+
+        if (it != Products.end()) {
+            Products.erase(it, Products.end());
+            cout << product_name << " removed from the cart." << endl;
+        } 
+        else {
+            cout << product_name << " not found in the cart." << endl;
+        }
+        }
+
+    void modify_user(){fstream userdb("User_database.txt");
+            int id;
+            cout << "Enter ID of user: "; cin >> id;
+            int stored_id;
+            string stored_name, stored_surname, stored_address, stored_password;
+            while (userdb >> stored_id ) {
+                if (stored_id == id) {
+                    int mchoice;
+                    cout << "1. Modify name\n2. Modify surname\n3. Modify address\n4. Modify password\n5. Exit\nPlease enter your choice: "; cin >> mchoice;
+                    switch(mchoice) {
+                        case 1: {
+                            // Temporary variables to store modified data
+                            string new_name;
+                            string temp_line;  // Temporary variable to store the entire line
+
+                            // Create a temporary file to store modified data
+                            ofstream tempFile("temp_user_database.txt");
+
+                            // Loop through the userdb file
+                            while (userdb >> stored_id >> stored_name >> stored_surname >> stored_address >> stored_password) {
+                                if (stored_id == id) {
+                                    cout << "Enter a new name: "; cin >> new_name;
+                                    // Update only the name
+                                    tempFile << stored_id << " " << new_name << " " << stored_surname << " " << stored_address << " " << stored_password << endl;
+                                } else {
+                                    // Write unchanged data to the temporary file
+                                    tempFile << stored_id << " " << stored_name << " " << stored_surname << " " << stored_address << " " << stored_password << endl;
+                                }
+                            }
+
+                            // Close the original file
+                            userdb.close();
+                            
+                            // Close the temporary file
+                            tempFile.close();
+
+                            // Remove the original file
+                            remove("User_database.txt");
+
+                            // Rename the temporary file to the original file
+                            rename("temp_user_database.txt", "User_database.txt");
+                        } case 2: {
+                            // Temporary variables to store modified data
+                            string new_surname;
+                            string temp_line;  // Temporary variable to store the entire line
+
+                            // Create a temporary file to store modified data
+                            ofstream tempFile("temp_user_database.txt");
+
+                            // Loop through the userdb file
+                            while (userdb >> stored_id >> stored_name >> stored_surname >> stored_address >> stored_password) {
+                                if (stored_id == id) {
+                                    cout << "Enter a new name: "; cin >> new_surname;
+                                    // Update only the name
+                                    tempFile << stored_id << " " << stored_name << " " << new_surname << " " << stored_address << " " << stored_password << endl;
+                                } else {
+                                    // Write unchanged data to the temporary file
+                                    tempFile << stored_id << " " << stored_name << " " << stored_surname << " " << stored_address << " " << stored_password << endl;
+                                }
+                            }
+
+                            // Close the original file
+                            userdb.close();
+                            
+                            // Close the temporary file
+                            tempFile.close();
+
+                            // Remove the original file
+                            remove("User_database.txt");
+
+                            // Rename the temporary file to the original file
+                            rename("temp_user_database.txt", "User_database.txt");
+                        } case 3: {
+                            
+                            string new_address; //temporary variables to store modified data
+                            string temp_line;  //temporary variable to store the entire line
+
+                            
+                            ofstream tempFile("temp_user_database.txt"); //create a temporary file to store modified data
+
+                            
+                            while (userdb >> stored_id >> stored_name >> stored_surname >> stored_address >> stored_password) { //loop through the userdb file
+                                if (stored_id == id) {
+                                    cout << "Enter a new address: "; cin >> new_address;
+                                    //update only the name
+                                    tempFile << stored_id << " " << stored_name << " " << stored_surname << " " << new_address << " " << stored_password << endl;
+                                } else {
+                                    //write unchanged data to the temporary file
+                                    tempFile << stored_id << " " << stored_name << " " << stored_surname << " " << stored_address << " " << stored_password << endl;
+                                }
+                            }
+
+                            
+                            userdb.close(); //close the original file
+                            tempFile.close(); //close the temporary file
+
+                            
+                            remove("User_database.txt"); //remove the original file
+
+                            
+                            rename("temp_user_database.txt", "User_database.txt"); //rename the temporary file to the original file
+                        } case 4: {
+                            // Temporary variables to store modified data
+                            string new_password;
+                            string temp_line;  // Temporary variable to store the entire line
+
+                            // Create a temporary file to store modified data
+                            ofstream tempFile("temp_user_database.txt");
+
+                            // Loop through the userdb file
+                            while (userdb >> stored_id >> stored_name >> stored_surname >> stored_address >> stored_password) {
+                                if (stored_id == id) {
+                                    cout << "Enter a new name: "; cin >> new_password;
+                                    // Update only the name
+                                    tempFile << stored_id << " " << stored_name << " " << stored_surname << " " << stored_address << " " << new_password << endl;
+                                } else {
+                                    // Write unchanged data to the temporary file
+                                    tempFile << stored_id << " " << stored_name << " " << stored_surname << " " << stored_address << " " << stored_password << endl;
+                                }
+                            }
+
+                            // Close the original file
+                            userdb.close();
+                            
+                            // Close the temporary file
+                            tempFile.close();
+
+                            // Remove the original file
+                            remove("User_database.txt");
+
+                            // Rename the temporary file to the original file
+                            rename("temp_user_database.txt", "User_database.txt");
+                        } case 5:
+                            break;
+                    }
+                }
+            }
+        }
+        }
 
     void manage_users(){
-        int choice;
-        do{
-            cout << "--> Users manager <--" << endl;
-            cout << "1. Add User" << endl;
-            cout << "2. Delete User" << endl;
-            cout << "3. Modify User" << endl;
-            cout << "4. Exit" << endl;
-            cin >> choice;
-
-            switch(choice){
+        fstream userdb("User_database.txt");
+        if(userdb.is_open()){
+            int choice;
+            cout << "1. Add user\n2. Modify user\n3. Delete user\nPlease enter your choice: "; cin >> choice;
+            switch (choice) {
                 case 1:
-                    add_user();
-                    break;
+                    registerUser();
                 case 2:
-                    delete_user();
-                    break;
+                    modifyUser();
                 case 3:
-                    modify_user();
-                    break;
-                case 4:
-                    break;
-                default:
-                    cout << "Incorrect choice, please try again." << endl << endl;  
+                    delUser();
+                }   
             }
-
-        }while(choice != 4);
     }
 
     void view_orders(){}
-    void warehouse_update(){}
+    void warehouse_update(){Warehouse warehouse;
+            warehouse.warehouse_update();
+            }
 
     void Admin_Functions(){
         int choice;
@@ -471,6 +731,25 @@ public:
     
 };
 
+class Payment {
+    public:
+        string payment_type;
+        int amount;
+
+        Payment(string pt, int a) : payment_type(pt), amount(a){}
+
+        void process_payment() {
+            cout << "Processing payment...";
+            sleep_for(3s);
+        }
+        void validate_transaction() {
+
+        }
+        void issue_reciept() {
+            cout << "Payment type: " << payment_type << "\nAmount" << amount << endl;
+        }
+};
+
 void Menu(){
     cout << endl;
     cout << "====> Menu <====" << endl;
@@ -488,7 +767,7 @@ int main() {
     User user;
     Cart cart;
     Inventory inventory;
-
+    inventory.add_product();
     do {
         Menu();
         cin >> choice;
