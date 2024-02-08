@@ -797,7 +797,7 @@ int main() {
                 
                 break;
             case 5: // Admin
-                // Admin_Functions();
+                Admin_Functions();
                 break;
             case 6: // Exit
                 cout << "Exiting the program." << endl;
