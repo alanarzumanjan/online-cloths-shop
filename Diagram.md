@@ -4,13 +4,19 @@
 title: Online Cloths Shop
 ---
 classDiagram
+
+    class BackEnd
+    class UserDB
+    class ProductDB
+    class ReviewDB
+
     class User
     User : int Id
     User : string name
     User : string surname
     User : string adress
     User : register_or_login()
-    User : User_database.txt
+
     
     class Product
     Product : int product_id
@@ -37,9 +43,6 @@ classDiagram
     UserCard : double bank-account
     UserCard : buying()
 
-    class Warehouse
-    Warehouse : Warehouse_database.txt
-    Warehouse : update_Warehouse()
     
     class Review
     Review : int review_id
@@ -71,14 +74,19 @@ classDiagram
     Admin : view_orders()
     Admin : update_Warehouse()
 
-    Cart <|-- Warehouse
-    Cart <|-- Product
-    User <|-- Cart
-    User <|-- UserCard
-    User <|-- Review
-    User <|-- Order
-    User <|-- Admin
-    Order <|-- Payment
-    Order <|-- Product
+    
+    Cart "1" o-- "*" Product
+    User "1" *-- "1" Cart
+    User "1" *-- "*" UserCard
+    User --> ReviewDB
+    User "1" *-- "*" Order
+    User --|> Admin
+    User "1" *-- "1" Payment
+    UserDB "1" o-- "*" User
+    ProductDB "1" o-- "*" Product
+    ReviewDB "1" o-- "*" Review
+    BackEnd "1" o--  "1" UserDB
+    BackEnd "1" o--  "1" ReviewDB
+    BackEnd "1" o--  "1" ProductDB
 
 ```
